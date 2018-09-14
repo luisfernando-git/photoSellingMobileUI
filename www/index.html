@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <link rel="stylesheet" type="text/css" href="mobileui/style.css">
+        <meta name="format-detection" content="telephone=no">
+        <meta charset="utf-8">
+        <meta name="msapplication-tap-highlight" content="no">
+        <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width">
+        <link rel="stylesheet" type="text/css" href="css/index.css">
+        <link rel="stylesheet" type="text/css" href="css/jquery-ui.css">
+        <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC6NLEfDPHSnfm91GqRTCz2FHkL48aJlDY"></script>
+        <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+        <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+        <title>PhotoSelling</title>
+    </head>
+    <body>
+
+        <div class="header blue-grey">
+            <h1 class="full text-white align-center text-strong">PhotoSelling</h1>
+        </div>
+
+        <div class="content row-center align-center cover black-opacity-10" id="conteudo">
+            <div class="col-20"></div>
+            <div class ="col">
+                <div class="align-center">
+                    <img src="img/logo.png" width="50%">
+                </div>
+                <div class="space-big"></div>
+                <div class="list color white-opacity-50">
+                    <div class="item icon ion-android-mail">
+                        <input id="username" class="placeholder-black text-black" type="email" placeholder="E-mail">
+                    </div>
+                    <div class="item icon ion-android-lock">
+                        <input id="password" class="placeholder-black text-black" type="password" placeholder="Password">
+                    </div>
+                    <!-- <div class="item">
+                        <h2 class="left text-grey-600">Lembrar Senha?</h2>
+                        <div class="right">
+                            <input type="checkbox" class="switch teal-800">
+                        </div>
+                    </div> -->
+                </div>
+                <div class="space"></div>
+                <button id="btnLogin" class="radius full text-white" onclick="login()">LOGIN</button>
+            </div>
+            <div class="col-20"></div>
+        </div>
+
+        <script type="text/javascript" src="cordova.js"></script>
+        <script type="text/javascript" src="mobileui/mobileui.js"></script>
+        <script type="text/javascript" src="js/index.js"></script>
+        <script type="text/javascript" src="js/map.js"></script> 
+        <script type="text/javascript" src="js/mapEvents.js"></script>
+        <script type="text/javascript" src="js/login.js"></script> 
+        <script type="text/javascript" src="js/filtroFormando.js"></script>
+        <script type="text/javascript" src="js/empresa.js"></script>
+        <script type="text/javascript" src="js/findFormandosVendedor.js"></script>
+    </body>
+</html>

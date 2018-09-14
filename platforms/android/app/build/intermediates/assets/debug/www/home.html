@@ -1,0 +1,92 @@
+<div class="page">
+    <div class="header blue-grey">
+        <button class="left icon ion-navicon" onclick="openMenu('menu')"></button>
+        <div class="right">
+            <button class="icon ion-ios-navigate" onclick="myLocation()"></button>
+            <button class="icon ion-search" onclick="findFormando()"></button>
+            <button class="icon ion-university" onclick="trocarEmpresa()"></button>
+            <button class="icon ion-ios-information-outline" onclick="openPopover('legenda')"></button>
+        </div>
+    </div>
+
+    <div class="menu white" id="menu">
+        <div class="list no-border">
+            <div class="item blue-grey-400" data="usuario">
+                <div class="space-big"></div>
+                <h2 class="text-strong">${realname}</h2>
+                <p class="text-blue-grey-100">${email}</p>
+            </div>
+        </div>
+
+        <div class="list">
+            <div class="item" onclick="closeMenu('menu')">
+                <div class="left">
+                    <i class="icon ion-android-map"></i>
+                </div>
+                <h1>Mapa</h1>
+            </div>
+            <div class="item">
+                <div class="left">
+                    <i class="icon ion-social-usd"></i>
+                </div>
+                <h1>Conta Corrente</h1>
+            </div>
+            <div class="item">
+                <div class="left">
+                    <i class="icon ion-wrench"></i>
+                </div>
+                <h1>Configurações</h1>
+            </div>
+            <div class="item" onclick="backPage()">
+                <div class="left">
+                    <i class="icon ion-log-out"></i>
+                </div>
+                <h1>Sair</h1>
+            </div>
+        </div>
+    </div>
+    
+    <div class="hidden" id="empresaVendedor">
+        <div class="list">
+            <div class="item" data="empresas">
+                <h2>${razaoSocial}</h2>
+                <div class="right">
+                    <input id="selectEmp" type="radio" class="teal">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="popover" id="legenda">
+        <div class="list">
+            <div class="item">
+                <i class="left icon ion-ios-location red"></i>
+                <h1>Aberta</h1>
+            </div>
+            <div class="item">
+                <i class="left icon ion-ios-location yellow"></i>
+                <h1>Em Andamento</h1>
+            </div>
+            <div class="item" style="width: 250px">
+                <i class="left icon ion-ios-location light-green"></i>
+                <h1>Finalizado com Sucesso</h1>
+            </div>
+            <div class="item">
+                <i class="left icon ion-ios-location blue-900"></i>
+                <h1>Finalizado com Ressalva</h1>
+            </div>
+            <div class="item">
+                <i class="left icon ion-ios-location orange"></i>
+                <h1>Não Concretizada</h1>
+            </div>
+            <div class="item">
+                <i class="left icon ion-ios-location purple"></i>
+                <h1>Suspensa</h1>
+            </div>
+        </div>
+    </div>
+
+    <div class="content has-header">
+        <div class="top" id="mapa" style="height: 100%; width: 100%"></div>
+    </div>
+</div>
