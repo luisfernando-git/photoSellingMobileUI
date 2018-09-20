@@ -30,7 +30,7 @@ function onSuccess(position) {
         distance: (position.coords.latitude + position.coords.longitude)
     }
 
-    posicaoVendedor = localizacaoVend;
+    posicaoVendedor = localizacaoVend
     
     var nomeVendedor = usuario.realname
     map.addMarker({
@@ -106,7 +106,7 @@ function localizaFormandos() {
             buttons: [
                 {
                     label: 'OK',
-                    onclick: function(){
+                    onclick: function() {
                         map.setClickable(true)
                         closeAlert('alertValidation')
                     }
@@ -115,15 +115,15 @@ function localizaFormandos() {
         })
     }
 
-    map.animateCamera({
-        target: origem, 
-        zoom: 5, 
-        duration: 1000
-    })
+    // map.animateCamera({
+    //     target: origem, 
+    //     zoom: 7, 
+    //     duration: 1000
+    // })
 }
 
 function ordenarRotas() {
-    var array = [];
+    var array = []
     formandos.forEach((formando) => { 
         if (formando.idStatus != 1 && formando.idStatus != 2) {
             array.push(formando.distance)
@@ -133,10 +133,10 @@ function ordenarRotas() {
     array.push(posicaoVendedor.distance)
     array.sort()
 
-    var newArray = [];
+    var newArray = []
     for (var i = 0; i < array.length; i++) {
         if (array[i] == posicaoVendedor.distance) {
-            newArray = array.slice(i, 23);
+            newArray = array.slice(i, 23)
         }
     }
     
@@ -145,12 +145,12 @@ function ordenarRotas() {
             if (position == formando.distance) {
                 routesOrder.push(formando)
             }
-        });
+        })
     })
 
     routesOrder.sort(function (a, b) {
-        return (a.distance > b.distance) ? 1 : ((b.distance > a.distance) ? -1 : 0);
-    });
+        return (a.distance > b.distance) ? 1 : ((b.distance > a.distance) ? -1 : 0)
+    })
 }
 
 function calculateRoute() {
@@ -167,6 +167,15 @@ function calculateRoute() {
                 location: locRoutes
             })
         }
+    })
+
+    var latLngBounds  = new plugin.google.maps.LatLngBounds(routesOrder)
+    console.log(latLngBounds)
+
+    map.animateCamera({
+        target: latLngBounds.getCenter(), 
+        zoom: 7, 
+        duration: 1000
     })
 
     directionsService.route({
