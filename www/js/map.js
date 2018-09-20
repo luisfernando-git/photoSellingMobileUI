@@ -169,7 +169,7 @@ function calculateRoute() {
         }
     })
 
-    var latLngBounds  = new plugin.google.maps.LatLngBounds(routesOrder)
+    var latLngBounds  = new plugin.google.maps.LatLngBounds(waypts)
     console.log(latLngBounds)
 
     map.animateCamera({
