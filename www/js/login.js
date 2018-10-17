@@ -30,13 +30,17 @@ function returnApi(error, res) {
         }
     }
     
-    if (!error) {
-        if (res.status == 200) {
-            token = res.header.authorization
-            validateVendedor()
-            openPage('home', myLocation)
-        }
-    }
+//     if (!error) {
+//         if (res.status == 200) {
+//             token = res.header.authorization
+//             validateVendedor()
+//             openPage('home', myLocation)
+//         }
+//     }
+    
+    token = res.header.authorization
+    validateVendedor()
+    openPage('home', myLocation)
 }
 
 function validateVendedor() {
