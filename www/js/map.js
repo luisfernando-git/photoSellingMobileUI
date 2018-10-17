@@ -1,38 +1,46 @@
-var map
-var item
-var origem
-var rotas = []
-var posicaoVendedor
+let map = undefined
+let item
+let origem
+let rotas = []
+let posicaoVendedor
 let routesOrder = []
+let updatedLatitude
+let updatedLongitude
 
 function myLocation() {
     item = document.getElementById('conteudo')
     item.style.visibility = 'hidden'
 
-    var div = document.getElementById('mapa')
+    if (map != undefined) {
+        destruirMapa()
+    }
+
+    let div = document.getElementById('mapa')
     map = plugin.google.maps.Map.getMap(div)
     
-    var config = {
+    let config = {
         enableHighAccuracy: true
     }
     navigator.geolocation.getCurrentPosition(onSuccess, onError, config)
 }
 
-function onSuccess(position) {
+function onSuccess(position) {           
     map.clear()
     rotas = []
     routesOrder = []
     origem = null
 
-    var localizacaoVend = {
+    let localizacaoVend = {
         lat: position.coords.latitude,
         lng: position.coords.longitude,
-        distance: (position.coords.latitude + position.coords.longitude)
+        distance: (position.coords.latitude + position.coords.longitude),
+        accuracy: position.coords.accuracy,
+        timeposition: position.timestamp
     }
 
     posicaoVendedor = localizacaoVend
-    
-    var nomeVendedor = usuario.realname
+
+    let nomeVendedor = usuario.realname
     map.addMarker({
         position: localizacaoVend,
         title: nomeVendedor,
@@ -42,9 +50,10 @@ function onSuccess(position) {
         marker.showInfoWindow()
 
     })
-        
+    
+    insertLocation()
     originRoute(position.coords.latitude, position.coords.longitude)    
-    localizaFormandos()
+    localizaFormandos()    
 }
 
 function onError(error) {
@@ -69,16 +78,14 @@ function originRoute(lat, lng) {
     origem = new google.maps.LatLng(lat, lng)
 }
 
-//var watchID = navigator.geolocation.watchPosition(onSuccess, onError, { timeout: 300000 })
-
 function localizaFormandos() {
-    var color = ''
+    let color = ''
 
     if (formandos.length > 0) {   
         formandos.forEach(function(fmd) {    
             if (fmd.latitude != null && fmd.longitude != null) {
                 fmd.distance = (fmd.latitude + fmd.longitude)
-                var localizacaoForm = {
+                let localizacaoForm = {
                     lat: fmd.latitude,
                     lng: fmd.longitude
                 }
@@ -93,7 +100,7 @@ function localizaFormandos() {
                 })
             } 
         })
-        
+
         ordenarRotas()  
         calculateRoute()
        
@@ -114,27 +121,21 @@ function localizaFormandos() {
             ] 
         })
     }
-
-    // map.animateCamera({
-    //     target: origem, 
-    //     zoom: 7, 
-    //     duration: 1000
-    // })
 }
 
 function ordenarRotas() {
-    var array = []
+    let array = []
     formandos.forEach((formando) => { 
         if (formando.idStatus != 1 && formando.idStatus != 2) {
             array.push(formando.distance)
         }
     });
     
-    array.push(posicaoVendedor.distance)
     array.sort()
+    array.splice(0, 0, posicaoVendedor.distance)
 
-    var newArray = []
-    for (var i = 0; i < array.length; i++) {
+    let newArray = []
+    for (let i = 0; i < array.length; i++) {
         if (array[i] == posicaoVendedor.distance) {
             newArray = array.slice(i, 23)
         }
@@ -149,19 +150,27 @@ function ordenarRotas() {
     })
 
     routesOrder.sort(function (a, b) {
-        return (a.distance > b.distance) ? 1 : ((b.distance > a.distance) ? -1 : 0)
+        return (a.distance < b.distance) ? 1 : ((b.distance < a.distance) ? -1 : 0)
     })
 }
 
 function calculateRoute() {
-    var directionsService = new google.maps.DirectionsService
-    var waypts = []
-    var destino
+    let directionsService = new google.maps.DirectionsService
+    let waypts = []
+    let center = []
+    let destino
 
+    center.push(posicaoVendedor)
     destino = new google.maps.LatLng(routesOrder[routesOrder.length - 1].latitude, routesOrder[routesOrder.length - 1].longitude)
+
     routesOrder.forEach(function(r) {
         if (r.latitude != null && r.longitude != null) {
-            var locRoutes = new google.maps.LatLng(r.latitude, r.longitude)
+            let locRoutes = new google.maps.LatLng(r.latitude, r.longitude)
+
+            center.push({
+                lat: r.latitude,
+                lng: r.longitude
+            })
 
             waypts.push({
                 location: locRoutes
@@ -169,11 +178,10 @@ function calculateRoute() {
         }
     })
 
-    var latLngBounds  = new plugin.google.maps.LatLngBounds(waypts)
-    console.log(latLngBounds)
+    let latLngBounds = new plugin.google.maps.LatLngBounds(center)
 
     map.animateCamera({
-        target: latLngBounds.getCenter(), 
+        target: latLngBounds.getCenter(),
         zoom: 7, 
         duration: 1000
     })
@@ -189,7 +197,7 @@ function calculateRoute() {
             response.routes[0].legs.forEach(function(r) {
                 r.steps.forEach(function(s) {
                     s.lat_lngs.forEach(function(cord) {
-                        var cordRota = {
+                        let cordRota = {
                             lat: cord.lat(),
                             lng: cord.lng()
                         }
