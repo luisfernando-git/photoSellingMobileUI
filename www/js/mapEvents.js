@@ -5,6 +5,9 @@ function destruirMapa() {
 document.addEventListener('backPage', function() {
     destruirMapa()
     item.style.visibility = 'visible'
+    empresaSelect = null
+    posicaoVendedor.lat = null
+    posicaoVendedor.lng = null
 })
 
 document.addEventListener('popoverOpened', function() {
@@ -33,8 +36,13 @@ function myLocationFilter() {
 function onSuccessFilter(position) {
     var localizacaoVend = {
         lat: position.coords.latitude,
-        lng: position.coords.longitude
+        lng: position.coords.longitude,
+        distance: (position.coords.latitude + position.coords.longitude),
+        accuracy: position.coords.accuracy,
+        timeposition: position.timestamp
     }
+
+    posicaoVendedor = localizacaoVend
     
     var nomeVendedor = usuario.realname
     map.addMarker({
@@ -46,6 +54,7 @@ function onSuccessFilter(position) {
         marker.showInfoWindow()
     })
     
+    insertLocation()
     originRoute(position.coords.latitude, position.coords.longitude)
 }
 
@@ -87,3 +96,8 @@ function calculateRouteFilter(latitude, longitude) {
         }
     })
 }
+
+var intervalo = window.setInterval(function() {
+    myLocation()
+}, 60000 * 30);
+    
