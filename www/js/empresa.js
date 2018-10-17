@@ -1,3 +1,5 @@
+var empresaSelect
+
 function trocarEmpresa(){
     map.setClickable(false)
     alert({
@@ -10,14 +12,16 @@ function trocarEmpresa(){
             {
                 label: 'OK',
                 onclick: function() {
-                    closeAlert()
+                    closeAlert('alertEmpresa')
                     map.setClickable(true)
+                    findFormVendedor()
+                    myLocation()
                 }
             },
             {
                 label: 'Cancelar',
                 onclick: function() {
-                    closeAlert()
+                    closeAlert('alertEmpresa')
                     map.setClickable(true)
                 }
             }
@@ -25,6 +29,26 @@ function trocarEmpresa(){
     })
 }
 
-document.addEventListener('backPage', function (){
+function selectedEmpresa(index) {
+    
+    empresas.forEach(function(e) {
+        e.checked = false
+    })
+
+    empresaSelect = empresas.filter(function (e, i) {
+        return i == index ? e : null
+    })
+
+    empresaSelect = empresaSelect[0]
+    empresaSelect.checked = true
+}
+
+MobileUI.validaselected = function(c) {
+    if (c === 'true') {
+        return "checked"
+    }    
+}
+
+document.addEventListener('backPage', function() {
     closeAlert('alertEmpresa')
 })
