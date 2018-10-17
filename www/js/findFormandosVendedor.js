@@ -3,14 +3,16 @@ var formandos = []
 function findFormVendedor() {
     var url = 'https://myphotos.rfsolutionit.com.br/services/findFormandosVendedor'
 
-    empresas.forEach(function (empresa) {
+    if (empresaSelect == null || empresaSelect == undefined) {
+        empresaSelect = empresas[0]
+        empresaSelect.checked = true
+    }
 
-        MobileUI.ajax.post(url).send()
-            .set('Authorization', token)
-            .query('arg0=' + usuario.username)
-            .query('arg1=' + empresa.id)
-            .end(returnFormandos)
-    })
+    MobileUI.ajax.post(url).send()
+        .set('Authorization', token)
+        .query('arg0=' + usuario.username)
+        .query('arg1=' + empresaSelect.id)
+        .end(returnFormandos)
 }
 
 function returnFormandos(error, res) {
