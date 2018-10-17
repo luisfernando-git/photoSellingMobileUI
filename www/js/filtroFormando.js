@@ -1,3 +1,7 @@
+var filtroContrato
+var filtroNome
+var optionSelected
+
 function findFormando() {
     map.setClickable(false)
     alert({
@@ -7,11 +11,11 @@ function findFormando() {
                 ' <div class="list">                                                                  '+
                 '   <div class="item">                                                                '+
                 '       <label class="text-strong">Contrato:</label>                                  '+ 
-                '       <input id="codContrato" type="text" placeholder="Digite para pesquisar...">   '+
+                '       <input id="codContrato" type="search" placeholder="Digite para pesquisar..."> '+
                 '   </div>                                                                            '+
                 '   <div class="item">                                                                '+
                 '       <label for="nomeFormando" class="text-strong">Formando:</label>               '+
-                '       <input id="nomeFormando" type="text" placeholder="Digite para pesquisar...">  '+        
+                '       <input id="nomeFormando" type="search" placeholder="Digite para pesquisar...">'+        
                 '   </div>                                                                            '+ 
                 '   <div class="item">                                                                '+ 
                 '       <label for="situacaoVenda" class="text-strong">Situação Venda:</label>        '+
@@ -32,10 +36,20 @@ function findFormando() {
                 label: 'Buscar',
                 onclick: function() {
                     map.clear()
-                    filtrarFormando()
-                    selectSituacaoVenda()
-                    closeAlert('alertFormando')
-                    map.setClickable(true)
+                    filtroContrato = document.getElementById('codContrato').value
+                    filtroNome = document.getElementById('nomeFormando').value
+                    optionSelected = document.getElementById('situacaoVenda').value
+
+                    if (filtroContrato == '' && filtroNome == '' && optionSelected == '') {
+                        myLocation()
+                        closeAlert('alertFormando')
+                        map.setClickable(true)
+                    } else {
+                        selectSituacaoVenda()
+                        filtrarFormando()
+                        closeAlert('alertFormando')
+                        map.setClickable(true)
+                    }
                 }
             },
             {
@@ -54,11 +68,11 @@ document.addEventListener('backPage', function () {
 })
 
 function filtrarFormando() {
-    var filtroContrato = document.getElementById('codContrato').value
-    var filtroNome = document.getElementById('nomeFormando').value
+    var center = []
 
     if (filtroContrato != '' || filtroNome != '') {
         myLocationFilter()
+        center.push(posicaoVendedor)
     }
 
     if (filtroContrato != '') {
@@ -70,6 +84,11 @@ function filtrarFormando() {
                         lng: element.longitude
                     }
 
+                    center.push({
+                        lat: element.latitude,
+                        lng: element.longitude
+                    })
+
                     calculateRouteFilter(element.latitude, element.longitude)
                     situacaoVenda(element.idStatus)
                     map.addMarker({
@@ -79,14 +98,15 @@ function filtrarFormando() {
                     }, function(marker) {
                         marker.showInfoWindow()
                     }) 
-
-                    map.animateCamera({
-                        target: origem, 
-                        zoom: 5, 
-                        duration: 1000
-                    })
                 }
             }
+        })
+        
+        var latLngBounds = new plugin.google.maps.LatLngBounds(center)
+        map.animateCamera({
+            target: latLngBounds.getCenter(), 
+            zoom: 7, 
+            duration: 1000
         })
     }
 
@@ -99,6 +119,11 @@ function filtrarFormando() {
                         lng: element.longitude
                     }
 
+                    center.push({
+                        lat: element.latitude,
+                        lng: element.longitude
+                    })
+
                     calculateRouteFilter(element.latitude, element.longitude)
                     situacaoVenda(element.idStatus)
                     map.addMarker({
@@ -108,27 +133,31 @@ function filtrarFormando() {
                     }, function(marker) {
                         marker.showInfoWindow()
                     })
-
-                    map.animateCamera({
-                        target: origem, 
-                        zoom: 5, 
-                        duration: 1000
-                    })
                 }
             }
+        })
+        
+        latLngBounds = new plugin.google.maps.LatLngBounds(center)
+        map.animateCamera({
+            target: latLngBounds.getCenter(), 
+            zoom: 7, 
+            duration: 1000
         })
     }  
 }
 
 function selectSituacaoVenda() {
-    var optionSelected = document.getElementById('situacaoVenda').value
     var directionsService = new google.maps.DirectionsService
     var wayptsFilter = []
     var rotasFilter = []
+    var array = []
+    var routesOrderFilter = []
+    var center = []
     var destinoSV
 
     if (optionSelected != '') {
         myLocationFilter()
+        center.push(posicaoVendedor)
         formandos.forEach(function (element) { 
             if (element['idStatus'] == optionSelected) {
                 if (element.latitude != null && element.longitude != null) {
@@ -137,13 +166,8 @@ function selectSituacaoVenda() {
                         lat: element.latitude,
                         lng: element.longitude
                     }
-                    
-                    var locRoutesFilter = new google.maps.LatLng(element.latitude, element.longitude)
-                    destinoSV = new google.maps.LatLng(element.latitude, element.longitude)
 
-                    wayptsFilter.push({
-                        location: locRoutesFilter
-                    })
+                    array.push(element.distance)
 
                     situacaoVenda(element.idStatus)
                     map.addMarker({
@@ -153,14 +177,58 @@ function selectSituacaoVenda() {
                     }, function(marker) {
                         marker.showInfoWindow()
                     })
-
-                    map.animateCamera({
-                        target: origem, 
-                        zoom: 5, 
-                        duration: 1000
-                    })
                 }
             }
+        })
+
+        array.sort()
+        array.splice(0, 0, posicaoVendedor.distance)
+
+        var newArray = []
+        for (var i = 0; i < array.length; i++) {
+            if (array[i] == posicaoVendedor.distance) {
+                newArray = array.slice(i, 21)
+            }
+        }
+
+        formandos.forEach(formando => {
+            newArray.forEach(position => {
+                if (position == formando.distance) {
+                    routesOrderFilter.push(formando)
+                }
+            })
+        })
+    
+        routesOrderFilter.sort(function (a, b) {
+            return (a.distance < b.distance) ? 1 : ((b.distance < a.distance) ? -1 : 0)
+        })
+
+        if (routesOrderFilter.length > 0) {
+            destinoSV = new google.maps.LatLng(routesOrderFilter[routesOrderFilter.length - 1].latitude, 
+                routesOrderFilter[routesOrderFilter.length - 1].longitude);   
+        }
+
+        routesOrderFilter.forEach(function(r) {
+            if (r.latitude != null && r.longitude != null) {
+                var locRoutesFilter = new google.maps.LatLng(r.latitude, r.longitude)
+    
+                center.push({
+                    lat: r.latitude,
+                    lng: r.longitude
+                })
+    
+                wayptsFilter.push({
+                    location: locRoutesFilter
+                })
+            }
+        })
+
+        var latLngBounds = new plugin.google.maps.LatLngBounds(center)
+
+        map.animateCamera({
+            target: latLngBounds.getCenter(), 
+            zoom: 7, 
+            duration: 1000
         })
 
         directionsService.route({
@@ -204,8 +272,12 @@ document.addEventListener('alertOpened', function() {
             contratos.push(f.cont_id)
         }
     })
+    
     $("#codContrato").autocomplete({
-        source: contratos
+        source: function(request, response) {
+            var results = $.ui.autocomplete.filter(contratos, request.term)
+            response(results.slice(0, 5))
+        }
     })
 })
 
@@ -216,7 +288,11 @@ document.addEventListener('alertOpened', function() {
             nomes.push(f.nome)
         }
     })
-    $("#nomeFormando" ).autocomplete({
-        source: nomes
+
+    $("#nomeFormando").autocomplete({
+        source: function(request, response) {
+            var results = $.ui.autocomplete.filter(nomes, request.term)
+            response(results.slice(0, 5))
+        }
     })
 })
