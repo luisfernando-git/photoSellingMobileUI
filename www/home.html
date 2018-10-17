@@ -4,7 +4,7 @@
         <div class="right">
             <button class="icon ion-ios-navigate" onclick="myLocation()"></button>
             <button class="icon ion-search" onclick="findFormando()"></button>
-            <button class="icon ion-university" onclick="trocarEmpresa()"></button>
+            <button class="icon ion-ios-home" onclick="trocarEmpresa()"></button>
             <button class="icon ion-ios-information-outline" onclick="openPopover('legenda')"></button>
         </div>
     </div>
@@ -31,12 +31,12 @@
                 </div>
                 <h1>Conta Corrente</h1>
             </div>
-            <div class="item">
+            <!-- <div class="item">
                 <div class="left">
                     <i class="icon ion-wrench"></i>
                 </div>
                 <h1>Configurações</h1>
-            </div>
+            </div> -->
             <div class="item" onclick="backPage()">
                 <div class="left">
                     <i class="icon ion-log-out"></i>
@@ -51,7 +51,7 @@
             <div class="item" data="empresas">
                 <h2>${razaoSocial}</h2>
                 <div class="right">
-                    <input id="selectEmp" type="radio" class="teal">
+                    <input type="radio" name="radio-emp" class="teal" onclick="selectedEmpresa($$index)" $$validaselected{checked}>
                 </div>
             </div>
         </div>
